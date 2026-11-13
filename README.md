@@ -10,7 +10,11 @@
 [![Latest build date][badge-latest-build-date]][badge-latest-build-date-url]
 
 > [!NOTE]
-> This is the davidfuzju fork. It builds one image variant, `zhcn` (TortoiseBots, tw-mod-autoscale, tw-mod-zhcn, mod-azeroth-voices, mod-twow-invasions, plus Chinese localisation patches), published as `ghcr.io/davidfuzju/tortoise-*:zhcn`. See [`AGENTS.md`](AGENTS.md) for what differs from upstream.
+> This is the davidfuzju fork. It builds one image variant, `zhcn`
+> (TortoiseBots, tw-mod-autoscale, tw-mod-zhcn, mod-azeroth-voices,
+> mod-twow-invasions, plus Chinese localisation patches), published as
+> `ghcr.io/davidfuzju/tortoise-*:zhcn`. See [`AGENTS.md`](AGENTS.md) for what
+> differs from upstream.
 
 ---
 

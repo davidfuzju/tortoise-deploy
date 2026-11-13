@@ -1,4 +1,7 @@
 {
+  // davidfuzju: AGENTS.md is ours and written in Chinese; dprint's wrapping does
+  // not suit it.
+  "excludes": ["AGENTS.md", "CLAUDE.md"],
   "markdown": {
     "hardBreakKind": "doubleSpace",
     "lineWidth": 79,
