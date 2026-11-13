@@ -9,6 +9,7 @@
 | `.github/deploy.yaml` | 只留一个变体 `zhcn`：TortoiseBots + tw-mod-autoscale + tw-mod-zhcn + mod-azeroth-voices + mod-twow-invasions；去掉 base / modules 变体、tw-mod-leech、徽章 |
 | `docker/patches/zhcn-*.patch` | BluetomatoBo/tortoise-wow 的三处中文相关核心修复（脚本 NPC 问候、宠物名重载、商城中文名），构建时打到核心上 |
 | `docker/patches/modules/<模块目录>/*.patch` | 模块克隆后打的补丁。现有：`mod-azeroth-voices/npc-chatter-getname-concat.patch`（其 b8e7fb5 在本核心上编不过：`GetName()` 返回 `const char*`，不能与字面量直接 `+`） |
+| `.github/workflows/notify-build-result.yaml` | 构建失败开 `build-failure` issue，成功后关闭（每日构建无人值守） |
 | `docker/server/Dockerfile` | 克隆模块后打上面的模块补丁；模块自己的 CMake 不安装 SQL 时（mod-twow-invasions），构建时把 `data/sql/{character,world}` 拷到安装目录 |
 
 改动处都带 `davidfuzju:` 注释，合并上游时按它找。
@@ -24,4 +25,5 @@
 ## 构建与同步上游
 
 - 构建：推到 `master` 且改动在 `.github/deploy.yaml` / `docker/**` 时自动跑；每天 00:00 UTC 定时检查各来源有无新提交，有就重建；也可在 Actions 手动触发 `Build and push Docker images`（勾 `force-rebuild` 强制重建）。
+- 构建失败：`notify-build-result.yaml` 开一个 `build-failure` issue（已有就追加评论），下次成功自动关闭。查原因只看错误行，完整日志 70 KB 以上、大半是回显的 `RUN` 命令：`gh run view <id> --log-failed | grep -E 'error:|Error [0-9]|has to install|requires the module|Failed to apply'`
 - 合并上游：`git fetch upstream && git merge upstream/master`，冲突基本只在 `.github/deploy.yaml`，按上表保留我们的改动。
