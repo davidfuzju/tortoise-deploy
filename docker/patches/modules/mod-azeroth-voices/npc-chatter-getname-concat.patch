@@ -1,0 +1,16 @@
+davidfuzju: fix a build error in mod-azeroth-voices b8e7fb5 on this core,
+where WorldObject::GetName() returns a const char*.
+
+diff --git a/src/AzerothVoicesManager.cpp b/src/AzerothVoicesManager.cpp
+index 718a69e..26a4f6a 100644
+--- a/src/AzerothVoicesManager.cpp
++++ b/src/AzerothVoicesManager.cpp
+@@ -3847,7 +3847,7 @@ namespace AzerothVoices
+             std::string seed = !m_config->npcRandomPlayerInquiries.empty()
+                 ? Pick(m_config->npcRandomPlayerInquiries)
+                 : "Ask what brings them here.";
+-            topic = "Address the nearby adventurer " + anchor->GetName() + " (" +
++            topic = std::string("Address the nearby adventurer ") + anchor->GetName() + " (" +
+                 RaceName(anchor->GetRace()) + " " + ClassName(anchor->GetClass()) +
+                 ", Level " + std::to_string(anchor->GetLevel()) + "): " + seed;
+         }

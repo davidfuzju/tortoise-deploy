@@ -79,6 +79,14 @@ RUN \
           echo "The '$module_directory' module has no 'src/' directory and would not be compiled in."; \
           exit 1; \
         fi; \
+        # davidfuzju: patches for a module live in
+        # `docker/patches/modules/<module directory>/`.
+        for patch in "/build/patches/modules/$module_directory/"*.patch; do \
+          if [ -f "$patch" ]; then \
+            echo "Applying the patch '$patch' to the '$module_directory' module..."; \
+            git -C "$module_path" apply "$patch" || exit 1; \
+          fi; \
+        done; \
       done; \
     ); \
   else \
