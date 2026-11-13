@@ -17,37 +17,40 @@ sources:
     repository: Penqle/tw-mod-autoscale
     branch: main
     pin: 8675af22569674d906479aec0d7883d13d9212bb
-  leech:
-    repository: Penqle/tw-mod-leech
-    branch: master
-    pin: a3667c2c672b885fddc5afd76e48471dafa4eccc
   tortoisebots:
     repository: Sagiroth/TortoiseBots
     branch: main
     pin: bf8bb96f7517467fe05b6c0a4b97667cee04c03c
     cutoff: 7fbbf910eeec1cf8eca2ded08d172150c03a3b88
+  # davidfuzju: the modules this fork adds. They ship their own SQL; the
+  # migration-edit scan does not watch them, so a changed migration is applied
+  # again instead of halting the database.
+  zhcn:
+    repository: davidfuzju/tw-mod-zhcn
+    branch: main
+  voices:
+    repository: Ildourol/mod-twow-azeroth-voices
+    branch: main
+  invasions:
+    repository: Ildourol/mod-twow-invasions
+    branch: main
 
 # The server build checks the module configuration files and the module SQL it
 # installs against the `module-configs` and `module-sql-modules` vars of each
 # variant.
 variants:
-  base:
-    sources: [core]
+  # davidfuzju: one variant. `tw-mod-leech` is dropped. `mod-azeroth-voices` is
+  # the directory name its code and install paths expect (the repository is
+  # named `mod-twow-azeroth-voices`).
+  zhcn:
+    sources: [core, autoscale, tortoisebots, zhcn, voices, invasions]
     moving-tags: [latest]
-  modules:
-    sources: [core, autoscale, leech]
     vars:
-      modules: "tw-mod-autoscale={url:autoscale}@{commit:autoscale}|tw-mod-leech={url:leech}@{commit:leech}"
-      module-configs: modules/tw-mod-autoscale.conf,modules/tw-mod-leech.conf
-      server-licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-or-later AND MIT
-  modules-bots:
-    sources: [core, autoscale, leech, tortoisebots]
-    vars:
-      modules: "tw-mod-autoscale={url:autoscale}@{commit:autoscale}|tw-mod-leech={url:leech}@{commit:leech}|TortoiseBots={url:tortoisebots}@{commit:tortoisebots}"
-      module-configs: aiplayerbot.conf,modules/tortoise_bots.conf,modules/tw-mod-autoscale.conf,modules/tw-mod-leech.conf
-      module-sql-modules: TortoiseBots
+      modules: "tw-mod-autoscale={url:autoscale}@{commit:autoscale}|TortoiseBots={url:tortoisebots}@{commit:tortoisebots}|tw-mod-zhcn={url:zhcn}@{commit:zhcn}|mod-azeroth-voices={url:voices}@{commit:voices}|mod-twow-invasions={url:invasions}@{commit:invasions}"
+      module-configs: aiplayerbot.conf,modules/mod-azeroth-voices.conf,modules/mod-twow-invasions.conf,modules/tortoise_bots.conf,modules/tw-mod-autoscale.conf
+      module-sql-modules: TortoiseBots,tw-mod-zhcn,mod-azeroth-voices,mod-twow-invasions
       module-build-packages: libboost-dev libboost-filesystem-dev
-      server-licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-or-later AND MIT
+      server-licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-only AND GPL-2.0-or-later AND MIT
 
 vars:
   modules: ""
@@ -85,7 +88,6 @@ diff:
     # The module configuration templates are the sources of the
     # `*.conf.example` files under `config/`.
     - {source: autoscale, files: [conf/tw-mod-autoscale.conf.dist]}
-    - {source: leech, files: [conf/tw-mod-leech.conf.dist]}
     - {source: tortoisebots, files: [ai/playerbot/aiplayerbot.conf.dist.in, conf/tortoise_bots.conf.dist]}
     # `docker/database/docker-entrypoint.sh` builds on this entrypoint.
     - {source: mariadb, files: [12.3/docker-entrypoint.sh]}
@@ -134,13 +136,10 @@ images:
       base-name: ubuntu:26.04
       licenses: "{var:server-licenses}"
       version: "{commit:core}"
-  # `base` and `modules` run the same database, so `modules` gets the `base`
-  # image under its own tags.
   - name: database
     package: tortoise-database
     dockerfile: docker/database/Dockerfile
     tags: ["{variant}-{commit:core}", "{variant}"]
-    share: {base: [modules]}
     build-args:
       TORTOISE_REVISION: "{commit:core}"
       TORTOISE_MIGRATION_EDITS: "{migration-edits}"
@@ -151,6 +150,5 @@ images:
       licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-only AND GPL-2.0-or-later
       version: "{commit:core}"
 
-badges:
-  - {file: build-badge.json, variant: base, label: Latest Tortoise-WoW build, message: "{short-commit:core}", color: blue}
-  - {file: date-badge.json, label: Latest build date, message: "{timestamp}", color: orange}
+# davidfuzju: no badges (they need an FTP account).
+badges: []

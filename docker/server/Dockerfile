@@ -176,6 +176,17 @@ RUN \
           printf '%s/%s\n' "$target" "${shipped_path##*/}" \
             >>/build/module-sql-expected; \
         done </build/module-sql-shipped; \
+        # davidfuzju: a module whose CMake hook does not install its SQL (such
+        # as mod-twow-invasions) gets it copied here.
+        if [ -s /build/module-sql-shipped ] && [ ! -d "$installed_sql" ]; then \
+          echo "The '$module_directory' module does not install its SQL; copying it to '$installed_sql'."; \
+          for target in character world; do \
+            if [ -d "$module_path/data/sql/$target" ]; then \
+              mkdir -p "$installed_sql/$target" && \
+              cp "$module_path/data/sql/$target/"*.sql "$installed_sql/$target/" || exit 1; \
+            fi; \
+          done; \
+        fi; \
         if [ -d "$installed_sql" ]; then \
           find -L "$installed_sql" -mindepth 2 -maxdepth 2 -xdev -type f \
             -name '*.sql' \
