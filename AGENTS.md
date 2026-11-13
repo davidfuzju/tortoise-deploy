@@ -8,7 +8,7 @@
 | --- | --- |
 | `.github/deploy.yaml` | 只留一个变体 `zhcn`：TortoiseBots + tw-mod-autoscale + tw-mod-zhcn + mod-azeroth-voices + mod-twow-invasions；去掉 base / modules 变体、tw-mod-leech、徽章 |
 | `docker/patches/zhcn-*.patch` | BluetomatoBo/tortoise-wow 的三处中文相关核心修复（脚本 NPC 问候、宠物名重载、商城中文名），构建时打到核心上 |
-| `docker/patches/modules/<模块目录>/*.patch` | 模块克隆后打的补丁。现有：`mod-azeroth-voices/npc-chatter-getname-concat.patch`（其 b8e7fb5 在本核心上编不过：`GetName()` 返回 `const char*`，不能与字面量直接 `+`） |
+| `docker/patches/modules/<模块目录>/*.patch` | 模块克隆后打的补丁（目前没有；曾用来修 mod-azeroth-voices b8e7fb5 的编译错误，上游 2026-11-13 已修） |
 | `.github/workflows/notify-build-result.yaml` | 构建失败开 `build-failure` issue，成功后关闭（每日构建无人值守） |
 | `docker/server/Dockerfile` | 克隆模块后打上面的模块补丁；模块自己的 CMake 不安装 SQL 时（mod-twow-invasions），构建时把 `data/sql/{character,world}` 拷到安装目录 |
 
